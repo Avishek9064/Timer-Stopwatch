@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timer and Stopwatch</title>
+    <style>
+        body {
+            background-color: #ff9a9e;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #timerInput {
+            width: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #timerDisplay, #stopwatchDisplay {
+            font-size: 48px;
+            color: #333;
+        }
+
+        .full-screen-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom right, #ff9a9e, #fad0c4);
+        }
+    </style>
+</head>
+<body>
+    <div class="full-screen-bg"></div>
+    <div class="container">
+        <h1>Timer</h1>
+        <div>
+            <button onclick="increaseTimerValue('timerInputHours')">+</button>
+            <input type="text" id="timerInputHours" placeholder="Hours" value="0">
+            <button onclick="decreaseTimerValue('timerInputHours')">-</button>
+        </div>
+        <div>
+            <button onclick="increaseTimerValue('timerInputMinutes')">+</button>
+            <input type="text" id="timerInputMinutes" placeholder="Minutes" value="0">
+            <button onclick="decreaseTimerValue('timerInputMinutes')">-</button>
+        </div>
+        <div>
+            <button onclick="increaseTimerValue('timerInputSeconds')">+</button>
+            <input type="text" id="timerInputSeconds" placeholder="Seconds" value="0">
+            <button onclick="decreaseTimerValue('timerInputSeconds')">-</button>
+        </div>
+        <button onclick="startTimer()">Start</button>
+        <button onclick="stopTimer()">Stop</button>
+        <button onclick="resetTimer()">Reset</button>
+        <h1 id="timerDisplay">00:00:00</h1>
+    </div>
+
+    <div class="container">
+        <h1>Stopwatch</h1>
+        <button onclick="startStopwatch()">Start</button>
+        <button onclick="stopStopwatch()">Stop</button>
+        <button onclick="resetStopwatch()">Reset</button>
+        <h1 id="stopwatchDisplay">00:00:00</h1>
+    </div>
+
+    <script>
+        // Timer
+        let timerDisplay = document.getElementById("timerDisplay");
+        let timerInterval;
+        let timerTime = 0;
+
+        function increaseTimerValue(inputId) {
+            let inputElement = document.getElementById(inputId);
+            let currentValue = parseInt(inputElement.value);
+            inputElement.value = currentValue + 1;
+        }
+
+        function decreaseTimerValue(inputId) {
+            let inputElement = document.getElementById(inputId);
+            let currentValue = parseInt(inputElement.value);
+            if (currentValue > 0) {
+                inputElement.value = currentValue - 1;
+            }
+        }
+
+
+    
+
+        function startTimer() {
+            let inputHours = parseInt(document.getElementById("timerInputHours").value);
+            let inputMinutes = parseInt(document.getElementById("timerInputMinutes").value);
+            let inputSeconds = parseInt(document.getElementById("timerInputSeconds").value);
+
+            if (isNaN(inputHours) || isNaN(inputMinutes) || isNaN(inputSeconds)) {
+                alert("Invalid input! Please enter numbers for hours, minutes, and seconds.");
+                return;
+            }
+
+            let totalTime = inputHours * 3600 + inputMinutes * 60 + inputSeconds;
+            let hours, minutes, seconds;
+
+            timerInterval = setInterval(function() {
+                hours = Math.floor(totalTime / 3600);
+                minutes = Math.floor((totalTime % 3600) / 60);
+                seconds = totalTime % 60;
+
+                timerDisplay.textContent = formatTime(hours) + ":" + formatTime(minutes) + ":" + formatTime(seconds);
+
+                if (totalTime <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "Time's up!";
+                }
+
+                totalTime--;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerTime = 0;
+            timerDisplay.textContent = "00:00:00";
+        }
+
+
+
+        // Stopwatch
+        let stopwatchDisplay = document.getElementById("stopwatchDisplay");
+        let stopwatchInterval;
+        let stopwatchTime = 0;
+
+        function startStopwatch() {
+            stopwatchInterval = setInterval(function() {
+                stopwatchTime++;
+                stopwatchDisplay.textContent = formatStopwatchTime(stopwatchTime);
+            }, 1000);
+        }
+
+        function stopStopwatch() {
+            clearInterval(stopwatchInterval);
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchTime = 0;
+            stopwatchDisplay.textContent = "00:00:00";
+        }
+
+
+
+        // Helper functions
+        function formatTime(time) {
+            return time < 10 ? "0" + time : time;
+        }
+
+        function formatStopwatchTime(time) {
+            let hours = Math.floor(time / 3600);
+            let minutes = Math.floor((time % 3600) / 60);
+            let seconds = time % 60;
+
+            return formatTime(hours) + ":" + formatTime(minutes) + ":" + formatTime(seconds);
+        }
+    </script>
+</body>
+</html>
